@@ -1,0 +1,75 @@
+services:
+  api:
+    build: ../services/api
+    container_name: orbitstack-api
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: orbitstack
+      DB_USER: orbitstack
+      DB_PASSWORD: orbitstack_dev_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  auth:
+    build: ../services/auth
+    container_name: orbitstack-auth
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5001/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  worker:
+    build: ../services/worker
+    container_name: orbitstack-worker
+    restart: unless-stopped
+
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: orbitstack
+      DB_USER: orbitstack
+      DB_PASSWORD: orbitstack_dev_password
+
+
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5002/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  postgres:
+    image: postgres:16
+    container_name: orbitstack-postgres
+    environment:
+      POSTGRES_DB: orbitstack
+      POSTGRES_USER: orbitstack
+      POSTGRES_PASSWORD: orbitstack_dev_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: orbitstack-redis
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
