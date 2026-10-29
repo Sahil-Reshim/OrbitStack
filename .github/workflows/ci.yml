@@ -36,19 +36,18 @@ jobs:
         with:
           context: ./services/api
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/orbitstack-api:${{ github.sha }}
+          tags: ghcr.io/sahil-reshim/orbitstack-api:${{ github.sha }}
 
       - name: Build and push Auth image
         uses: docker/build-push-action@v6
         with:
           context: ./services/auth
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/orbitstack-auth:${{ github.sha }}
+          tags: ghcr.io/sahil-reshim/orbitstack-auth:${{ github.sha }}
 
       - name: Build and push Worker image
         uses: docker/build-push-action@v6
         with:
           context: ./services/worker
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/orbitstack-worker:${{ github.sha }}
-
+          tags: ghcr.io/sahil-reshim/orbitstack-worker:${{ github.sha }}
