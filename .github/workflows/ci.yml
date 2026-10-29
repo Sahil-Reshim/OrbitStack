@@ -7,10 +7,15 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     name: Build Docker Images
     runs-on: ubuntu-latest
+
 
     steps:
       - name: Checkout repository
